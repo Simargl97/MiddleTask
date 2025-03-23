@@ -1,31 +1,60 @@
 #include <iostream>
-#include <string>
+#include <vector>
+#include <iterator>
 
-using namespace std;
+// Константный forward-итератор для массива элементов типа T
+// LegacyForwardIterator
 
-int hashFunction(const std::string& key) {
-    unsigned long long hash = 0;
+template <typename T>
+class ConstForwIter {
+public:
+    // Категория итератора
+    using iterator_category = std::forward_iterator_tag;
+    // Тип значения
+    using value_type = T;
+    // Разница между итераторами
+    using difference_type = std::ptrdiff_t;
+    // Указатель на константное значение
+    using pointer = const T*;
+    // Константная ссылка на значение
+    using reference = const T&; 
 
-    // использование простого числа для лучшего распределения
-    const unsigned int multiplier = 31; 
-    for (char c : key) {
-        hash = hash * multiplier + static_cast<unsigned char>(c);
-    }
+    // Конструктор принимает указатель на элемент
+    explicit ConstForwIter(pointer ptr) : m_ptr(ptr) {}
+    
+    // Оператор разыменования
+    reference operator*() const { return *m_ptr; }
+    // Оператор доступа к членам структуры/класса через итератор
+    pointer operator->() const { return m_ptr; }
 
-    // возвращаем индекс в диапазоне от 0 до 99
-    return hash % 100; 
-}
+    // Префиксный инкремент: сначала увеличивает указатель, затем возвращает ссылку на себя
+    ConstForwIter& operator++() { ++m_ptr; return *this; }
+    // Постфиксный инкремент: создаёт копию, увеличивает указатель, возвращает копию
+    ConstForwIter operator++(int) { ConstForwIter temp = *this; ++m_ptr; return temp; }
+    
+    // Операторы сравнения
+    bool operator==(const ConstForwIter& other) const { return m_ptr == other.m_ptr; }
+    bool operator!=(const ConstForwIter& other) const { return m_ptr != other.m_ptr; }
+
+private:
+    pointer m_ptr; // Указатель на текущий элемент
+};
 
 int main()
 {
     setlocale(LC_ALL, "ru_RU.UTF-8");
+
+    // Исходный вектор
+    std::vector<int> vec = {1, 2, 3, 4, 5};
+    // Итераторы на начало и конец
+    ConstForwIter<int> begin(vec.data()), end(vec.data() + vec.size()); 
     
-    std::string input;
-    std::cout << "Введите строку: ";
-    std::getline(std::cin, input);
-    
-    int index = hashFunction(input);
-    std::cout << "Хеш-индекс: " << index << std::endl;
+    // Перебираем элементы с помощью итератора
+    while (begin != end) {
+        std::cout << *begin << " "; 
+        ++begin; 
+    }
+    std::cout << std::endl;
     
     return 0;
 }
