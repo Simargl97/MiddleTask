@@ -32,10 +32,6 @@ public:
     bool operator==(const ConstForwIter& other) const { return m_ptr == other.m_ptr; }
     bool operator!=(const ConstForwIter& other) const { return m_ptr != other.m_ptr; }
     
-    // Операторы сложения и вычитания (для std::advance, std::distance)
-    ConstForwIter operator+(difference_type n) const { return ConstForwIter(m_ptr + n); }
-    ConstForwIter operator-(difference_type n) const { return ConstForwIter(m_ptr - n); }
-    
     // Разница между итераторами
     difference_type operator-(const ConstForwIter& other) const { return m_ptr - other.m_ptr; }
     
