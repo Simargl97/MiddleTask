@@ -17,7 +17,7 @@ public:
     using reference = const T&;
 
     // Конструкторы
-    ConstForwIter() : m_ptr(nullptr) {}  // Конструктор по умолчанию
+    ConstForwIter() : m_ptr(nullptr) {}  
     explicit ConstForwIter(pointer ptr) : m_ptr(ptr) {}
     
     // Оператор разыменования
