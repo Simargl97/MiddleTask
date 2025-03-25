@@ -1,59 +1,55 @@
 #include <iostream>
-#include <vector>
-#include <iterator>
+#include <map>
+#include <unordered_map>
+#include <set>
+#include <algorithm>
 
-// Константный forward-итератор 
-// LegacyForwardIterator
+int main()
+{
+    setlocale(LC_ALL, "ru_RU.UTF-8");
 
-template <typename T>
-class ConstForwardIterator {
-public:
-    // Категория итератора
-    using iterator_category = std::forward_iterator_tag;
-    // Тип значения
-    using value_type = T;
-    // Разница между итераторами
-    using difference_type = std::ptrdiff_t;
-    // Указатель на константное значение
-    using pointer = const T*;
-    // Константная ссылка на значение
-    using reference = const T&; 
+    // Создаем упорядоченную map с ключами типа int и значениями типа string
+    std::map<int, std::string> myMap = {
+        {1, "один"},
+        {2, "два"},
+        {3, "три"}
+    };
 
-    // Конструктор принимает указатель на элемент
-    explicit ConstForwardIterator(pointer ptr) : m_ptr(ptr) {}
-    
-    // Оператор разыменования
-    reference operator*() const { return *m_ptr; }
-    // Оператор доступа к членам структуры/класса через итератор
-    pointer operator->() const { return m_ptr; }
-
-    // Префиксный инкремент: сначала увеличивает указатель, затем возвращает ссылку на себя
-    ConstForwardIterator& operator++() { ++m_ptr; return *this; }
-    // Постфиксный инкремент: создаёт копию, увеличивает указатель, возвращает копию
-    ConstForwardIterator operator++(int) { ConstForwardIterator temp = *this; ++m_ptr; return temp; }
-    
-    // Операторы сравнения
-    bool operator==(const ConstForwardIterator& other) const { return m_ptr == other.m_ptr; }
-    bool operator!=(const ConstForwardIterator& other) const { return m_ptr != other.m_ptr; }
-
-private:
-    pointer m_ptr; // Указатель на текущий элемент
-};
-
-int main() {
-    std::vector<int> vec = {1, 2, 3, 4, 5};
-    // Итераторы на начало и конец
-    ConstForwardIterator<int> begin(vec.data()), end(vec.data() + vec.size()); 
-    
-    // Перебираем элементы с помощью итератора
-    while (begin != end) {
-        std::cout << *begin << " "; 
-        ++begin;
+    int keyToFind = 2;
+    // Поиск элемента по ключу
+    auto it = myMap.find(keyToFind); 
+    if (it != myMap.end()) {
+        std::cout << "Найден элемент: ключ = " << it->first << ", значение = " << it->second << std::endl;
+    } else {
+        std::cout << "Элемент с ключом " << keyToFind << " не найден." << std::endl;
     }
+
+    // Создаем неупорядоченную map
+    std::unordered_map<int, std::string> myUnorderedMap = {
+        {1, "один"},
+        {2, "два"},
+        {3, "три"},
+        {4, "четыре"}
+    };
+
+    // Подсчет количества элементов, у которых длина строки больше 3 символов
+    auto count = std::count_if(myUnorderedMap.begin(), myUnorderedMap.end(),
+                               [](const std::pair<const int, std::string>& item) {
+                                   return item.second.size() > 3;
+                               });
+    std::cout << "Количество элементов, где длина строки больше 3: " << count << std::endl;
+
+    // Создаем множество и выводим его элементы в отсортированном порядке
+    std::set<int> mySet = {5, 3, 8, 1, 9};
+
+    std::for_each(mySet.begin(), mySet.end(), [](int value) {
+        std::cout << value << " ";
+    });
     std::cout << std::endl;
-    
+
     return 0;
 }
+
 
 
 
