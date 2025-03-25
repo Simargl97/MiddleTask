@@ -1,54 +1,64 @@
 #include <iostream>
-#include <map>
-#include <unordered_map>
-#include <set>
+#include <vector>
 #include <algorithm>
+#include <unordered_map>
+#include <memory>
+#include <iterator>
+
+// Структура с динамическими данными
+struct Data
+{
+    int* value;
+    Data(int v) { value = new int(v); }
+    Data(const Data& other) { value = new int(*other.value); }
+    ~Data() { delete value; }
+};
 
 int main()
 {
     setlocale(LC_ALL, "ru_RU.UTF-8");
+    
+    // 1. Глубокое копирование с copy
+    std::vector<Data> source = { Data(10), Data(20), Data(30) };
+    std::vector<Data> destination;
+    destination.reserve(source.size());
+    std::copy(source.begin(), source.end(), std::back_inserter(destination));
+    std::cout << "Глубокое копирование: " << *destination[0].value << std::endl;
 
-    // Создаем упорядоченную map с ключами типа int и значениями типа string
-    std::map<int, std::string> myMap = {
-        {1, "один"},
-        {2, "два"},
-        {3, "три"}
-    };
+    // 2. Поверхностное копирование с copy
+    std::vector<int*> shallow_source = { new int(1), new int(2), new int(3) };
+    std::vector<int*> shallow_copy;
+    shallow_copy.reserve(shallow_source.size());
+    std::copy(shallow_source.begin(), shallow_source.end(), std::back_inserter(shallow_copy));
+    std::cout << "Поверхностное копирование: " << *shallow_copy[0] << std::endl;
 
-    int keyToFind = 2;
-    // Поиск элемента по ключу
-    auto it = myMap.find(keyToFind); 
-    if (it != myMap.end()) {
-        std::cout << "Найден элемент: ключ = " << it->first << ", значение = " << it->second << std::endl;
-    } else {
-        std::cout << "Элемент с ключом " << keyToFind << " не найден." << std::endl;
-    }
+    // Освобождение памяти
+    for (int* ptr : shallow_source) delete ptr;
 
-    // Создаем неупорядоченную map
-    std::unordered_map<int, std::string> myUnorderedMap = {
-        {1, "один"},
-        {2, "два"},
-        {3, "три"},
-        {4, "четыре"}
-    };
+    // 3. Использование copy для std::unordered_map
+    std::unordered_map<int, std::string> original_map = { {1, "One"}, {2, "Two"}, {3, "Three"} };
+    std::unordered_map<int, std::string> copied_map;
+    std::copy(original_map.begin(), original_map.end(), std::inserter(copied_map, copied_map.begin()));
+    std::cout << "Копирование unordered_map: " << copied_map[2] << std::endl;
 
-    // Подсчет количества элементов, у которых длина строки больше 3 символов
-    auto count = std::count_if(myUnorderedMap.begin(), myUnorderedMap.end(),
-                               [](const std::pair<const int, std::string>& item) {
-                                   return item.second.size() > 3;
-                               });
-    std::cout << "Количество элементов, где длина строки больше 3: " << count << std::endl;
-
-    // Создаем множество и выводим его элементы в отсортированном порядке
-    std::set<int> mySet = {5, 3, 8, 1, 9};
-
-    std::for_each(mySet.begin(), mySet.end(), [](int value) {
-        std::cout << value << " ";
-    });
+    // 4. Использование fill для заполнения массива
+    int arr[5];
+    std::fill(std::begin(arr), std::end(arr), 42);
+    std::cout << "Заполненный массив: ";
+    for (int num : arr) std::cout << num << " ";
     std::cout << std::endl;
 
+    // 5. Использование find
+    std::vector<int> numbers = { 1, 2, 3, 4, 5 };
+    auto it = std::find(numbers.begin(), numbers.end(), 3);
+    if (it != numbers.end()) {
+        std::cout << "Элемент найден: " << *it << std::endl;
+    } else {
+        std::cout << "Элемент не найден" << std::endl;
+    }
     return 0;
 }
+
 
 
 
